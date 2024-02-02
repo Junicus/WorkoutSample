@@ -10,6 +10,7 @@ public class WorkoutDbContext(DbContextOptions<WorkoutDbContext> options)
 {
     public DbSet<Workout> Workouts => Set<Workout>();
     public DbSet<Exercise> Exercises => Set<Exercise>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

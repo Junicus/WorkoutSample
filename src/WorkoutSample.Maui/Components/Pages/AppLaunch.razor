@@ -1,0 +1,49 @@
+﻿@page "/"
+@using WorkoutSample.Maui.Models
+@using System.Text.Json
+@using System.IdentityModel.Tokens.Jwt
+@using WorkoutSample.Maui.Contracts
+@inject NavigationManager NavigationManager
+@inject IAppService AppService
+
+<h3>App Launching</h3>
+
+Loading...
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userDetailsStr = await SecureStorage.GetAsync(nameof(Settings.UserBasicDetails));
+
+        if (!string.IsNullOrEmpty(userDetailsStr))
+        {
+            var userBasicDetails = JsonSerializer.Deserialize<UserBasicDetails>(userDetailsStr);
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(userBasicDetails.AccessToken) as JwtSecurityToken;
+            Settings.UserBasicDetails = userBasicDetails;
+
+            if (jsonToken.ValidTo < DateTime.UtcNow)
+            {
+                bool isTokenRefreshed = await AppService.RefreshToken();
+                if (isTokenRefreshed)
+                {
+                    NavigationManager.NavigateTo("/dashboard");
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/login");
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/dashboard");
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+}

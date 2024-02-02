@@ -1,0 +1,56 @@
+﻿@page "/registration"
+@using WorkoutSample.Maui.Models
+@using WorkoutSample.Maui.Contracts
+@inject IAppService AppService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@registrationModel" OnValidSubmit="Submit">
+    <DataAnnotationsValidator/>
+    <div>
+        <label>Name</label>
+        <InputText type="text" @bind-Value="@registrationModel.Name"/>
+        <ValidationMessage For="@(() => registrationModel.Name)"/>
+    </div>
+    <div>
+        <label>Email</label>
+        <InputText type="email" @bind-Value="@registrationModel.Email"/>
+        <ValidationMessage For="@(() => registrationModel.Email)"/>
+    </div>
+    <div>
+        <label>Password</label>
+        <InputText type="password" @bind-Value="@registrationModel.Password"/>
+        <ValidationMessage For="@(() => registrationModel.Password)"/>
+    </div>
+    <div>
+        <NavLink href="/">
+            <span>Already have an account?</span>
+        </NavLink>
+    </div>
+    <div>
+        <button type="submit">
+            Register
+        </button>
+    </div>
+</EditForm>
+
+
+@code {
+    RegistrationModel registrationModel { get; set; } = new();
+
+    private async void Submit()
+    {
+        var result = await AppService.RegisterUser(registrationModel);
+        if (result.IsSuccess)
+        {
+            App.Current.MainPage.DisplayAlert("Success", "User Registered Successfully", "Ok");
+        }
+        else
+        {
+            App.Current.MainPage.DisplayAlert("Error", result.ErrorMessage, "Ok");
+        }
+
+        StateHasChanged();
+        //NavigationManager.NavigateTo("/");
+    }
+
+}
