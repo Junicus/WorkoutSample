@@ -1,12 +1,11 @@
-using System.ComponentModel;
+using System.Security.Claims;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using WorkoutSample.Api.Converters;
 using WorkoutSample.Api.Infrastructure;
+using WorkoutSample.Api.Options;
 using WorkoutSample.Api.Services;
 using WorkoutSample.Application;
 using WorkoutSample.Domain;
@@ -33,10 +32,14 @@ builder.Services.AddFastEndpoints()
     .AddSwaggerDocument()
     .AddJWTBearerAuth(builder.Configuration.GetSection("Jwt").GetValue<string>("Key") ??
                       throw new InvalidOperationException("Set the jwt signing key"))
-    .AddAuthorization();
+    .AddAuthorization(options => { });
+
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 
 builder.Services.AddDbContext<WorkoutDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("WorkoutConnectionString")));
+
+builder.Services.AddHostedService<MigrationsWorker>();
 
 var app = builder.Build();
 

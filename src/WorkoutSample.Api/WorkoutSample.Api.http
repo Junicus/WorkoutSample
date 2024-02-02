@@ -1,6 +1,53 @@
-@WorkoutSample.Api_HostAddress = http://localhost:5011
+@WorkoutSample.Api_HostAddress=http://localhost:5011
+@username=John Doe
+@password=P@$$w0rd1
+@email=admin@my.com
 
-GET {{WorkoutSample.Api_HostAddress}}/weatherforecast/
+
+### Register User
+
+POST {{WorkoutSample.Api_HostAddress}}/users/register
+Content-Type: application/json
+
+{
+  "name": "{{username}}",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Login User
+
+POST {{WorkoutSample.Api_HostAddress}}/users/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.global.set("access_token", response.body.accessToken);
+    client.global.set("refresh_token", response.body.refreshToken);
+%}
+
+### New Workout
+
+POST {{WorkoutSample.Api_HostAddress}}/workouts
+Content-Type: application/json
+
+{
+  "date": "2021-01-10",
+  "exercises": []
+}
+
+### Get Workouts
+
+< {%
+    request.variables.set("accessToken", client.global.get("access_token"));
+%}
+
+GET {{WorkoutSample.Api_HostAddress}}/workouts?fromDate=2021-01-01&toDate=2021-12-31
 Accept: application/json
+Authorization: Bearer {{accessToken}}
 
 ###

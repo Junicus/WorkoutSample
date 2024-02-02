@@ -244,7 +244,30 @@ namespace WorkoutSample.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("Exercise");
+                    b.ToTable("Exercises");
+                });
+
+            modelBuilder.Entity("WorkoutSample.Domain.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsInvalidated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("WorkoutSample.Domain.Workout", b =>
