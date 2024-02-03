@@ -11,8 +11,7 @@ public class GetWorkoutsEndpoint(WorkoutDbContext context) : Endpoint<
 {
     public override void Configure()
     {
-        Get("/");
-        Group<WorkoutsGroup>();
+        Get("/workouts");
     }
 
     public override async Task HandleAsync(WorkoutsRequest req, CancellationToken ct)
@@ -28,6 +27,11 @@ public class GetWorkoutsEndpoint(WorkoutDbContext context) : Endpoint<
             {
                 Id = w.Id,
                 Date = w.Date,
+                User = new()
+                {
+                    Id = userId,
+                    Name = User.Identity?.Name ?? ""
+                },
                 Exercises = w.Exercises.Select(e => new ExerciseDto
                 {
                     Id = e.Id,

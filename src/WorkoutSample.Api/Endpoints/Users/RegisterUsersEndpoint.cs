@@ -12,9 +12,8 @@ public class RegisterUsersEndpoint(UserManager<ApplicationUser> userManager) : E
 {
     public override void Configure()
     {
-        Post("/register");
+        Post("/users/register");
         AllowAnonymous();
-        Group<UsersGroup>();
     }
 
     public override async Task HandleAsync(RegisterUserRequest req, CancellationToken ct)

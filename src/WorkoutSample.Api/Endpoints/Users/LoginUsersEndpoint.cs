@@ -24,9 +24,8 @@ public class LoginUsersEndpoint(
 {
     public override void Configure()
     {
-        Post("/login");
+        Post("/users/login");
         AllowAnonymous();
-        Group<UsersGroup>();
     }
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)

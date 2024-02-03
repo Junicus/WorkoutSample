@@ -29,10 +29,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddFastEndpoints()
     .AddExceptionHandler<CustomExceptionHandler>()
-    .AddSwaggerDocument()
+    // .AddSwaggerDocument()
     .AddJWTBearerAuth(builder.Configuration.GetSection("Jwt").GetValue<string>("Key") ??
                       throw new InvalidOperationException("Set the jwt signing key"))
     .AddAuthorization(options => { });
+
+builder.Services.SwaggerDocument(options => { options.AutoTagPathSegmentIndex = 1; });
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 
