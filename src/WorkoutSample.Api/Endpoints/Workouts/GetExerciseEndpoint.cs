@@ -53,7 +53,7 @@ public class GetExerciseEndpoint(WorkoutDbContext context) : Endpoint<
 
     public class GetExerciseResponse
     {
-        public ExerciseDto Exercise { get; set; } = new();
+        public ExerciseVm Exercise { get; set; } = new();
     }
 
     public class GetExerciseRequest

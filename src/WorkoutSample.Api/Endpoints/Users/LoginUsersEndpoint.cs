@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -64,7 +63,6 @@ public class LoginUsersEndpoint(
             new Claim("name", existingUser.Name),
         });
 
-        var t = options?.Value?.Key;
         var secret = Encoding.ASCII.GetBytes(options.Value.Key);
         var tokenDescriptor = new SecurityTokenDescriptor
         {

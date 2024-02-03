@@ -23,7 +23,7 @@ public class GetWorkoutsEndpoint(WorkoutDbContext context) : Endpoint<
             .ToListAsync(ct);
         await SendOkAsync(new()
         {
-            Workouts = workouts.Select(w => new WorkoutDto
+            Workouts = workouts.Select(w => new WorkoutVm
             {
                 Id = w.Id,
                 Date = w.Date,
@@ -32,7 +32,7 @@ public class GetWorkoutsEndpoint(WorkoutDbContext context) : Endpoint<
                     Id = userId,
                     Name = User.Identity?.Name ?? ""
                 },
-                Exercises = w.Exercises.Select(e => new ExerciseDto
+                Exercises = w.Exercises.Select(e => new ExerciseVm
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -47,7 +47,7 @@ public class GetWorkoutsEndpoint(WorkoutDbContext context) : Endpoint<
 
     public class WorkoutsResponse
     {
-        public IEnumerable<WorkoutDto> Workouts { get; set; } = [];
+        public IEnumerable<WorkoutVm> Workouts { get; set; } = [];
     }
 
     public class WorkoutsRequest

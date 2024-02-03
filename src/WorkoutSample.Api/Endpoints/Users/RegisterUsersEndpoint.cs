@@ -8,7 +8,7 @@ namespace WorkoutSample.Api.Endpoints.Users;
 
 public class RegisterUsersEndpoint(UserManager<ApplicationUser> userManager) : Endpoint<
     RegisterUsersEndpoint.RegisterUserRequest,
-    RegisterUsersEndpoint.RegisterUserResponse>
+    EmptyResponse>
 {
     public override void Configure()
     {
@@ -43,19 +43,15 @@ public class RegisterUsersEndpoint(UserManager<ApplicationUser> userManager) : E
                     new ValidationFailure("AuthError", error.Description)));
             }
 
-            await SendAsync(new());
+            await SendOkAsync(new(), ct);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw new ValidationException(new[]
             {
                 new ValidationFailure(nameof(ApplicationUser), "Could not register user")
             });
         }
-    }
-
-    public class RegisterUserResponse
-    {
     }
 
     public class RegisterUserRequest

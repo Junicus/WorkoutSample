@@ -1,6 +1,6 @@
 ﻿namespace WorkoutSample.Api.ViewModels;
 
-public class ExerciseDto
+public class ExerciseVm
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

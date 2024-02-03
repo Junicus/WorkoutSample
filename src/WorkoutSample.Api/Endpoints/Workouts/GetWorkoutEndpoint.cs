@@ -38,7 +38,7 @@ public class GetWorkoutEndpoint(WorkoutDbContext context) : Endpoint<
                         Id = userId,
                         Name = User.Identity?.Name ?? ""
                     },
-                    Exercises = workout.Exercises.Select(e => new ExerciseDto()
+                    Exercises = workout.Exercises.Select(e => new ExerciseVm()
                     {
                         Id = e.Id,
                         Name = e.Name,
@@ -54,7 +54,7 @@ public class GetWorkoutEndpoint(WorkoutDbContext context) : Endpoint<
 
     public class GetWorkoutResponse
     {
-        public WorkoutDto Workout { get; set; } = new();
+        public WorkoutVm Workout { get; set; } = new();
     }
 
     public class GetWorkoutRequest
