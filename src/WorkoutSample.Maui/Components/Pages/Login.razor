@@ -1,20 +1,20 @@
 ﻿@page "/Login"
 @using WorkoutSample.Maui.Models
 @using WorkoutSample.Maui.Contracts
-@inject IAppService AppService
+@inject IWorkoutSampleAppService WorkoutSampleAppService
 @inject NavigationManager NavigationManager
 
-<EditForm Model="@loginModel" OnValidSubmit="Submit">
+<EditForm Model="@_loginModel" OnValidSubmit="Submit">
     <DataAnnotationsValidator/>
     <div>
         <label>Email</label>
-        <InputText type="email" @bind-Value="@loginModel.Email"/>
-        <ValidationMessage For="@(() => loginModel.Email)"/>
+        <InputText type="email" @bind-Value="@_loginModel.Email"/>
+        <ValidationMessage For="@(() => _loginModel.Email)"/>
     </div>
     <div>
         <label>Password</label>
-        <InputText type="password" @bind-Value="@loginModel.Password"/>
-        <ValidationMessage For="@(() => loginModel.Password)"/>
+        <InputText type="password" @bind-Value="@_loginModel.Password"/>
+        <ValidationMessage For="@(() => _loginModel.Password)"/>
     </div>
     <div>
         <NavLink href="registration">
@@ -29,14 +29,28 @@
 </EditForm>
 
 @code {
-    LoginModel loginModel = new();
+    readonly LoginModel _loginModel = new();
+
+    protected override void OnInitialized()
+    {
+        _loginModel.Email = Settings.UserBasicDetails.Email;
+        StateHasChanged();
+    }
 
     private async void Submit()
     {
-        var response = await AppService.AuthenticateUser(loginModel);
-        if (response != null)
+        var result = await WorkoutSampleAppService.LoginAsync(
+            _loginModel.Email,
+            _loginModel.Password);
+
+        if (result.IsSuccess)
         {
+            await WorkoutSampleAppService.GetUserInfoAsync();
             NavigationManager.NavigateTo("/dashboard");
+        }
+        else
+        {
+            await App.Current.MainPage.DisplayAlert("Error", "Error Login User", "Ok");
         }
     }
 

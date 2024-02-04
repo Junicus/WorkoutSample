@@ -3,37 +3,38 @@
 @using System.Text.Json
 @using System.IdentityModel.Tokens.Jwt
 @using WorkoutSample.Maui.Contracts
+@inject IWorkoutSampleAppService WorkoutSampleAppService
 @inject NavigationManager NavigationManager
-@inject IAppService AppService
 
 <h3>App Launching</h3>
 
 Loading...
 
+<button @onclick="ResetSettings">Reset Settings for Testing</button>
+
 @code {
+
 
     protected override async Task OnInitializedAsync()
     {
         var userDetailsStr = await SecureStorage.GetAsync(nameof(Settings.UserBasicDetails));
-
         if (!string.IsNullOrEmpty(userDetailsStr))
         {
-            var userBasicDetails = JsonSerializer.Deserialize<UserBasicDetails>(userDetailsStr);
+            var userBasicDetails = JsonSerializer.Deserialize<UserBasicDetails>(userDetailsStr)!;
+            if (string.IsNullOrEmpty(userBasicDetails.AccessToken))
+            {
+                NavigationManager.NavigateTo("/login");
+                return;
+            }
+
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(userBasicDetails.AccessToken) as JwtSecurityToken;
             Settings.UserBasicDetails = userBasicDetails;
 
-            if (jsonToken.ValidTo < DateTime.UtcNow)
+            if (jsonToken != null && jsonToken.ValidTo < DateTime.UtcNow)
             {
-                bool isTokenRefreshed = await AppService.RefreshToken();
-                if (isTokenRefreshed)
-                {
-                    NavigationManager.NavigateTo("/dashboard");
-                }
-                else
-                {
-                    NavigationManager.NavigateTo("/login");
-                }
+                var isTokenRefreshed = await WorkoutSampleAppService.RefreshTokenAsync();
+                NavigationManager.NavigateTo(isTokenRefreshed.IsSuccess ? "/dashboard" : "/login");
             }
             else
             {
@@ -44,6 +45,11 @@ Loading...
         {
             NavigationManager.NavigateTo("/login");
         }
+    }
+
+    private async Task ResetSettings()
+    {
+        await SecureStorage.SetAsync(nameof(Settings.UserBasicDetails), null!);
     }
 
 }

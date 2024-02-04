@@ -1,0 +1,58 @@
+﻿@page "/registration"
+@using WorkoutSample.Maui.Models
+@using WorkoutSample.Maui.Contracts
+@inject IWorkoutSampleAppService WorkoutSampleAppService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@_registerUserModel" OnValidSubmit="Submit">
+    <DataAnnotationsValidator/>
+    <div>
+        <label>Name</label>
+        <InputText type="text" @bind-Value="@_registerUserModel.Name"/>
+        <ValidationMessage For="@(() => _registerUserModel.Name)"/>
+    </div>
+    <div>
+        <label>Email</label>
+        <InputText type="email" @bind-Value="@_registerUserModel.Email"/>
+        <ValidationMessage For="@(() => _registerUserModel.Email)"/>
+    </div>
+    <div>
+        <label>Password</label>
+        <InputText type="password" @bind-Value="@_registerUserModel.Password"/>
+        <ValidationMessage For="@(() => _registerUserModel.Password)"/>
+    </div>
+    <div>
+        <NavLink href="/">
+            <span>Already have an account?</span>
+        </NavLink>
+    </div>
+    <div>
+        <button type="submit">
+            Register
+        </button>
+    </div>
+</EditForm>
+
+
+@code {
+    readonly RegisterUserModel _registerUserModel = new();
+
+    private async void Submit()
+    {
+        var result = await WorkoutSampleAppService.RegisterUserAsync(
+            _registerUserModel.Name,
+            _registerUserModel.Email,
+            _registerUserModel.Password);
+
+        if (result.IsSuccess)
+        {
+            await App.Current.MainPage.DisplayAlert("Success", "User Registered Successfully", "Ok");
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            await App.Current.MainPage.DisplayAlert("Error", "Error Registering User", "Ok");
+        }
+    }
+
+}

@@ -1,7 +1,74 @@
 ﻿@page "/dashboard"
+@using WorkoutSample.Maui.Models
+@using WorkoutSample.Maui.Contracts
+@inject IWorkoutSampleAppService WorkoutSampleAppService
+@inject NavigationManager NavigationManager   
 
-<h1>Index</h1>
+<div>
+    <h1>Hello @(!string.IsNullOrEmpty(Settings.UserBasicDetails.Name) ? Settings.UserBasicDetails.Name : "Unknown User")</h1>
+    <button @onclick="OnNewWorkoutClicked">New Workout</button>
+    <div>
+        <div>
+            <label>Start Date</label>
+            <InputDate @bind-Value="startDate"/>
+        </div>
+        <div>
+            <label>Start Date</label>
+            <InputDate @bind-Value="endDate"/>
+        </div>
+        <button @onclick="LoadWorkouts">Load</button>
+    </div>
+    <div>
+        <h2>Workouts</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amt Exercises</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var workout in workouts.Workouts)
+            {
+                <tr>
+                    <td>@workout.Date</td>
+                    <td>@workout.Exercises.Count</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+@* <button @onclick="ResetSettings">Reset Settings</button> *@
 
 @code {
+    private DateOnly? startDate;
+    private DateOnly? endDate;
+
+    private WorkoutsVm workouts = new();
+
+    private void ResetSettings()
+    {
+        Settings.UserBasicDetails = new UserBasicDetails();
+        SecureStorage.Remove(nameof(Settings.UserBasicDetails));
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task LoadWorkouts()
+    {
+        if (startDate is { } fromDate && endDate is { } toDate)
+        {
+            var response = await WorkoutSampleAppService.GetWorkoutsAsync(fromDate, toDate);
+            if (response.IsSuccess)
+            {
+                workouts = response.Value;
+            }
+        }
+    }
+
+    private void OnNewWorkoutClicked()
+    {
+        NavigationManager.NavigateTo("/NewWorkoutPage");
+    }
 
 }

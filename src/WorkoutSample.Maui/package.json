@@ -1,0 +1,13 @@
+﻿{
+  "name": "workoutsample.maui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "css:build": "npx tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css --minify"
+  },
+  "private": true,
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7"
+  }
+}
